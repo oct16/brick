@@ -1,0 +1,41 @@
+{
+    "name": "brick.json",
+    "version": "0.0.1",
+    "description": "a json compressor",
+    "main": "index.js",
+    "scripts": {
+        "dev": "node scripts/dev.js",
+        "build": "node scripts/build.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/oct16/brick.git"
+    },
+    "keywords": [
+        "json",
+        "compressor",
+        "cjson",
+        "hpack"
+    ],
+    "author": "oct16",
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/oct16/brick/issues"
+    },
+    "homepage": "https://github.com/oct16/brick#readme",
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^16.0.0",
+        "@rollup/plugin-node-resolve": "^10.0.0",
+        "@types/node": "^14.14.7",
+        "@typescript-eslint/eslint-plugin": "^4.7.0",
+        "@typescript-eslint/parser": "^4.7.0",
+        "eslint": "^7.13.0",
+        "eslint-config-prettier": "^6.15.0",
+        "eslint-plugin-prettier": "^3.1.4",
+        "execa": "^4.1.0",
+        "prettier": "^2.1.2",
+        "rollup-plugin-terser": "^7.0.2",
+        "rollup-plugin-typescript2": "^0.29.0",
+        "typescript": "^4.0.5"
+    }
+}
