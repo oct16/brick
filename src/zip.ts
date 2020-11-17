@@ -9,14 +9,13 @@ export class BrickJsonZip {
     private indexMap: Map<number, string> = new Map()
 
     constructor(json: AnyJson, arrayIdentifier?: string) {
+        if (typeof json !== 'object' || json === null) {
+            throw new Error('The params json is not a object')
+        }
         this.json = json
         arrayIdentifier && (this.arrayIdentifier = arrayIdentifier)
         this.startConvert()
     }
-
-    compress() {}
-
-    decompress(): void {}
 
     startConvert() {
         const data = this.json
@@ -32,7 +31,7 @@ export class BrickJsonZip {
         jsonArray.forEach(item => {
             const type = typeof item
             if (Array.isArray(item)) {
-                res.push(...this.deepConvertArray(item))
+                res.push(this.deepConvertArray(item))
             } else if (item !== null && type === 'object') {
                 res.push(this.deepConvertObj(item as JsonMap))
             } else {
@@ -55,7 +54,6 @@ export class BrickJsonZip {
             return res
         }
         const objValues = objKeys.map(key => obj[key])
-
         if (this.keys.length) {
             const latestKey = this.getLastKeyInMap()
             for (const [key, index] of this.keyMap) {
@@ -65,20 +63,33 @@ export class BrickJsonZip {
                     break
                 }
 
-                const text = uniqueKey.length > key.length ? uniqueKey : key
-                const sub = uniqueKey.length > key.length ? key : uniqueKey
+                const isRevert = uniqueKey.length < key.length
+                const text = isRevert ? key : uniqueKey
+                const sub = isRevert ? uniqueKey : key
                 const nextIndex = this.keys.length
 
                 // a part of keys matches
                 if (~text.indexOf(sub)) {
-                    const i = text.indexOf(sub)
-                    const str = text.substring(i + sub.length)
-                    const otherPart = str.split(',').filter(Boolean)
-                    const uniqueKey = [index, ...otherPart].map(k => (typeof k === 'number' ? this.getBy(k) : k)).join()
-                    const isKeyExist = this.getBy(uniqueKey) !== undefined
-                    if (!isKeyExist) {
-                        this.keys.push([index, ...otherPart])
-                        res.unshift(nextIndex)
+                    let newKey: string
+                    let otherPart: string[] = []
+                    if (isRevert) {
+                        debugger
+                        newKey = sub
+                        const index = this.keys.length
+                        this.keys.push(newKey.split(','))
+                        const shouldCombineKeyIndex = this.getBy(text) as number
+                        this.keys[shouldCombineKeyIndex] = [index, ...text.replace(newKey, '').split(',').filter(Boolean)]
+                        res.unshift(index)
+                    } else {
+                        const i = text.indexOf(sub)
+                        const str = text.substring(i + sub.length)
+                        otherPart = str.split(',').filter(Boolean)
+                        newKey = [index, ...otherPart].map(k => (typeof k === 'number' ? this.getBy(k) : k)).join()
+                        const isKeyExist = this.getBy(newKey) !== undefined
+                        if (!isKeyExist) {
+                            this.keys.push([index, ...otherPart])
+                            res.unshift(nextIndex)
+                        }
                     }
                     break
                 } else if (latestKey === key) {
@@ -93,18 +104,7 @@ export class BrickJsonZip {
             this.keys.push(objKeys)
         }
 
-        objValues.forEach(val => {
-            const type = typeof val
-            if (type === 'string' || type === 'number' || val === null || type === 'boolean') {
-                // if (type === 'string' || type === 'number') {
-                res.push(val as string | number)
-            } else if (Array.isArray(val)) {
-                res.push(this.deepConvertArray(val))
-            } else {
-                res.push(this.deepConvertObj(val as JsonMap))
-            }
-        })
-
+        res.push(...this.deepConvertArray(objValues, false))
         this.saveKey(uniqueKey)
         return res
     }

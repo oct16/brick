@@ -1,14 +1,6 @@
+import { AnyJson, BrickJsonResult } from './types'
 import { BrickJsonUnzip } from './unzip'
 import { BrickJsonZip } from './zip'
-
-type AnyJson = boolean | number | string | null | undefined | JsonArray | JsonMap
-interface JsonMap {
-    [key: string]: AnyJson
-}
-type JsonArray = Array<AnyJson>
-
-type BrickJsonResult = Array<BrickJsonBasic | BrickJsonResult>
-type BrickJsonBasic = string | number | null | undefined
 
 export const BrickJson = {
     zip(json: AnyJson) {

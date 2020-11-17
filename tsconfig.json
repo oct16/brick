@@ -2,11 +2,11 @@
     "compilerOptions": {
         "baseUrl": ".",
         "outDir": "dist",
-        "module": "ESNext",
-        "target": "ES2015",
+        "module": "commonjs",
+        "target": "esnext",
         "moduleResolution": "node",
-        "allowJs": true,
         "checkJs": true,
+        "allowJs": true,
         "noUnusedLocals": false,
         "strictNullChecks": true,
         "noImplicitAny": true,
@@ -20,12 +20,17 @@
         "jsx": "preserve",
         "skipLibCheck": true,
         "lib": [
-            "esnext",
-            "dom",
-            "dom.iterable"
+            "esnext"
         ],
         "types": [
-            "node"
+            "node",
+            "jest"
         ]
-    }
+    },
+    "include": [
+        "src/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
 }
