@@ -26,6 +26,39 @@ describe('Test convert a json ', () => {
 describe('Test the convert suite expected', () => {
     const zip = BrickJson.zip
 
+    test('Convert object', () => {
+        expect(
+            // prettier-ignore
+            zip({a:'a',b:'b'})
+        ).toEqual([
+            // prettier-ignore
+            [['a', 'b']],
+            // prettier-ignore
+            [0, 'a', 'b']
+        ])
+
+        expect(
+            // prettier-ignore
+            zip({a:'a',b:'b',c:[1,2,3]})
+        ).toEqual([
+            // prettier-ignore
+            [['a','b','c']],
+            // prettier-ignore
+            [0,'a','b',['$',1,2,3]]
+        ])
+    })
+
+    test('Convert array', () => {
+        expect(
+            // prettier-ignore
+            zip([1,2,3])
+        ).toEqual([
+            // prettier-ignore
+            [],
+            ['$', 1, 2, 3]
+        ])
+    })
+
     test('Convert normal json', () => {
         expect(
             // prettier-ignore
@@ -34,7 +67,7 @@ describe('Test the convert suite expected', () => {
             // prettier-ignore
             [['a', 'b']],
             // prettier-ignore
-            [[0, 'a', 'b']]
+            ['$',[0, 'a', 'b']]
         ])
     })
 
@@ -50,7 +83,7 @@ describe('Test the convert suite expected', () => {
             // prettier-ignore
             [['a', 'b'],[0, 'c'],[0, 'd']],
             // prettier-ignore
-            [[0, 'a', 'b'],[1, 'a', 'b', 'c'],[2, 'a', 'b', 'd']]
+            ['$',[0, 'a', 'b'],[1, 'a', 'b', 'c'],[2, 'a', 'b', 'd']]
         ])
     })
 
@@ -62,7 +95,7 @@ describe('Test the convert suite expected', () => {
             // prettier-ignore
             [[1,'c'],[ 'a','b']],
             // prettier-ignore
-            [[0,'a','b','c'],[1,'a','b']]
+            ['$',[0,'a','b','c'],[1,'a','b']]
         ])
 
         expect(
@@ -71,7 +104,7 @@ describe('Test the convert suite expected', () => {
         ).toEqual([
             // prettier-ignore
             [[2,'c'],['a','c'],['a','b']],
-            [[0,'a','b','c'],[1,'a','c'],[2,'a','b']]
+            ['$',[0,'a','b','c'],[1,'a','c'],[2,'a','b']]
             //prettier-ignore
         ])
     })
@@ -83,7 +116,7 @@ describe('Test the convert suite expected', () => {
         ).toEqual([
             // prettier-ignore
             [['a','b', 'c']],
-            [[0,['$',1],['$',2],'c']]
+            ['$',[0,['$',1],['$',2],'c']]
             //prettier-ignore
         ])
 
@@ -93,7 +126,7 @@ describe('Test the convert suite expected', () => {
         ).toEqual([
             // prettier-ignore
             [[2,'c'],['a','c'],['a','b']],
-            [[0,['$',1],['$',2],'c'],[1,'a','c'],[2,'a','b']]
+            ['$',[0,['$',1],['$',2],'c'],[1,'a','c'],[2,'a','b']]
             //prettier-ignore
         ])
     })
@@ -105,7 +138,7 @@ describe('Test the convert suite expected', () => {
         ).toEqual([
             // prettier-ignore
             [['a','b','c']],
-            [[0, [], [], []]]
+            ['$', [0, [], [], []]]
         ])
 
         expect(
@@ -114,7 +147,7 @@ describe('Test the convert suite expected', () => {
         ).toEqual([
             // prettier-ignore
             [['a','b','c']],
-            [[0, [0, [], [], []], [], []]]
+            ['$', [0, [0, [], [], []], [], []]]
         ])
     })
 
@@ -125,7 +158,7 @@ describe('Test the convert suite expected', () => {
         ).toEqual([
             // prettier-ignore
             [['a','b','c']],
-            [[0, [], [], []]]
+            ['$', [0, [], [], []]]
         ])
 
         expect(
@@ -134,7 +167,7 @@ describe('Test the convert suite expected', () => {
         ).toEqual([
             // prettier-ignore
             [['a','b']],
-            [[0, ['$', null, false, true, 123, '456'], []]]
+            ['$', [0, ['$', null, false, true, 123, '456'], []]]
         ])
 
         expect(
@@ -143,7 +176,7 @@ describe('Test the convert suite expected', () => {
         ).toEqual([
             // prettier-ignore
             [['a','b']],
-            [[0, [], ['$', ['$', ['$', ['$', ['$', ['$', ['$', ['$', ['$', ['$', ['$']]]]]]]]]]]]]
+            ['$', [0, [], ['$', ['$', ['$', ['$', ['$', ['$', ['$', ['$', ['$', ['$', ['$']]]]]]]]]]]]]
         ])
 
         expect(
@@ -157,7 +190,7 @@ describe('Test the convert suite expected', () => {
         ).toEqual([
             // prettier-ignore
             [['a','b']],
-            [[0, [], ['$']]]
+            ['$',[0, [], ['$']]]
             // prettier-ignore
         ])
 
@@ -177,7 +210,7 @@ describe('Test the convert suite expected', () => {
         ).toEqual([
             // prettier-ignore
             [['a','b']],
-            [[0, [], ['$']], ['$'], [0, [], ['$']]]
+            ['$',[0, [], ['$']], ['$'], [0, [], ['$']]]
             // prettier-ignore
         ])
 
@@ -198,7 +231,7 @@ describe('Test the convert suite expected', () => {
         ).toEqual([
             // prettier-ignore
             [['a','b'],['c'], ['d'], ['e']],
-            [[0, [], ['$']], ['$'], [0, [], ['$']],['$', [1, [2, [3, []]]]]]
+            ['$',[0, [], ['$']], ['$'], [0, [], ['$']],['$', [1, [2, [3, []]]]]]
             // prettier-ignore
         ])
 
@@ -210,7 +243,7 @@ describe('Test the convert suite expected', () => {
         ).toEqual([
             // prettier-ignore
             [['c'], ['d'], ['e']],
-            [['$', [0, [1, [2, []]]]]]
+            ['$',['$', [0, [1, [2, []]]]]]
             // prettier-ignore
         ])
 
@@ -221,7 +254,7 @@ describe('Test the convert suite expected', () => {
         ).toEqual([
             // prettier-ignore
             [['a'], ['b'], ['c'], ['d'], ['e'], ['f']],
-            [[0, ['$', [1, ['$', [2, ['$', [3, ['$', [4, [5, ['$', false, ['$', true, 123]]]]]]]]]]]]]
+            [0, ['$', [1, ['$', [2, ['$', [3, ['$', [4, [5, ['$', false, ['$', true, 123]]]]]]]]]]]]
             // prettier-ignore
         ])
     })

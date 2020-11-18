@@ -17,5 +17,15 @@ module.exports = {
     testPathIgnorePatterns: ['/node_modules/'],
     verbose: true,
     testEnvironment: 'jsdom',
-    setupFiles: ['<rootDir>/jest-setup.js']
+    setupFiles: ['<rootDir>/jest-setup.js'],
+    globals: {
+        'ts-jest': {
+            tsconfig: {
+                lib: ['ES2019'],
+                module: 'commonjs',
+                target: 'ES2019'
+            }
+        }
+    },
+    testTimeout: 10000
 }
