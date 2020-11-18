@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "node scripts/dev.js",
         "build": "node scripts/build.js",
-        "test": "jest"
+        "test": "jest",
+        "perf": "node benchmark/index.js"
     },
     "repository": {
         "type": "git",
@@ -27,11 +28,13 @@
     "devDependencies": {
         "@rollup/plugin-commonjs": "^16.0.0",
         "@rollup/plugin-node-resolve": "^10.0.0",
+        "@types/benchmark": "^2.1.0",
         "@types/jest": "^26.0.15",
         "@types/node": "^14.14.7",
         "@types/node-fetch": "^2.5.7",
         "@typescript-eslint/eslint-plugin": "^4.7.0",
         "@typescript-eslint/parser": "^4.7.0",
+        "benchmark": "^2.1.4",
         "eslint": "^7.13.0",
         "eslint-config-prettier": "^6.15.0",
         "eslint-plugin-prettier": "^3.1.4",
