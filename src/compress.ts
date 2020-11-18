@@ -1,6 +1,6 @@
 import { AnyJson, BrickJsonBasic, BrickJsonResult, JsonArray, JsonMap } from './types'
 
-export class BrickJsonZip {
+export class BrickJsonCompress {
     private arrayIdentifier = '$'
     private keys: (string | number)[][] = []
     private values: BrickJsonResult = []

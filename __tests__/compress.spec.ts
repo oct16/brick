@@ -2,34 +2,34 @@ import { BrickJson } from '../src'
 
 describe('Test convert a json ', () => {
     test('Wrong params throw a error', () => {
-        expect(() => BrickJson.zip(123)).toThrowError()
-        expect(() => BrickJson.zip(null)).toThrowError()
-        expect(() => BrickJson.zip(undefined)).toThrowError()
-        expect(() => BrickJson.zip(true)).toThrowError()
-        expect(() => BrickJson.zip(false)).toThrowError()
+        expect(() => BrickJson.compress(123)).toThrowError()
+        expect(() => BrickJson.compress(null)).toThrowError()
+        expect(() => BrickJson.compress(undefined)).toThrowError()
+        expect(() => BrickJson.compress(true)).toThrowError()
+        expect(() => BrickJson.compress(false)).toThrowError()
     })
 
     test('Result is a array', () => {
-        expect(Array.isArray(BrickJson.zip([{}]))).toEqual(true)
-        expect(Array.isArray(BrickJson.zip({}))).toEqual(true)
-        expect(Array.isArray(BrickJson.zip([]))).toEqual(true)
+        expect(Array.isArray(BrickJson.compress([{}]))).toEqual(true)
+        expect(Array.isArray(BrickJson.compress({}))).toEqual(true)
+        expect(Array.isArray(BrickJson.compress([]))).toEqual(true)
     })
 
     test('Result length equal 2', () => {
-        expect(BrickJson.zip({ a: 'a' }).length).toEqual(2)
-        expect(BrickJson.zip([]).length).toEqual(2)
-        expect(BrickJson.zip([{}, {}, {}]).length).toEqual(2)
-        expect(BrickJson.zip([{ a: 'a' }]).length).toEqual(2)
+        expect(BrickJson.compress({ a: 'a' }).length).toEqual(2)
+        expect(BrickJson.compress([]).length).toEqual(2)
+        expect(BrickJson.compress([{}, {}, {}]).length).toEqual(2)
+        expect(BrickJson.compress([{ a: 'a' }]).length).toEqual(2)
     })
 })
 
 describe('Test the convert suite expected', () => {
-    const zip = BrickJson.zip
+    const compress = BrickJson.compress
 
     test('Convert object', () => {
         expect(
             // prettier-ignore
-            zip({a:'a',b:'b'})
+            compress({a:'a',b:'b'})
         ).toEqual([
             // prettier-ignore
             [['a', 'b']],
@@ -39,7 +39,7 @@ describe('Test the convert suite expected', () => {
 
         expect(
             // prettier-ignore
-            zip({a:'a',b:'b',c:[1,2,3]})
+            compress({a:'a',b:'b',c:[1,2,3]})
         ).toEqual([
             // prettier-ignore
             [['a','b','c']],
@@ -51,7 +51,7 @@ describe('Test the convert suite expected', () => {
     test('Convert array', () => {
         expect(
             // prettier-ignore
-            zip([1,2,3])
+            compress([1,2,3])
         ).toEqual([
             // prettier-ignore
             [],
@@ -62,7 +62,7 @@ describe('Test the convert suite expected', () => {
     test('Convert normal json', () => {
         expect(
             // prettier-ignore
-            zip([{a:'a',b:'b'}])
+            compress([{a:'a',b:'b'}])
         ).toEqual([
             // prettier-ignore
             [['a', 'b']],
@@ -74,7 +74,7 @@ describe('Test the convert suite expected', () => {
     test('duplicate keys can merge', () => {
         expect(
             // prettier-ignore
-            zip([
+            compress([
                 { a: 'a', b: 'b' },
                 { a: 'a', b: 'b', c: 'c' },
                 { a: 'a', b: 'b', d: 'd' }
@@ -90,7 +90,7 @@ describe('Test the convert suite expected', () => {
     test('duplicate keys can merge by inverted', () => {
         expect(
             // prettier-ignore
-            zip([{ a:'a',b:'b',c:'c'},{a:'a',b:'b'}])
+            compress([{ a:'a',b:'b',c:'c'},{a:'a',b:'b'}])
         ).toEqual([
             // prettier-ignore
             [[1,'c'],[ 'a','b']],
@@ -100,7 +100,7 @@ describe('Test the convert suite expected', () => {
 
         expect(
             // prettier-ignore
-            zip([{ a:'a',b:'b',c:'c'},{a:'a',c:'c'},{ a:'a',b:'b'}])
+            compress([{ a:'a',b:'b',c:'c'},{a:'a',c:'c'},{ a:'a',b:'b'}])
         ).toEqual([
             // prettier-ignore
             [[2,'c'],['a','c'],['a','b']],
@@ -112,7 +112,7 @@ describe('Test the convert suite expected', () => {
     test('json include sub array', () => {
         expect(
             // prettier-ignore
-            zip([{ a:[1],b:[2],c:'c'}])
+            compress([{ a:[1],b:[2],c:'c'}])
         ).toEqual([
             // prettier-ignore
             [['a','b', 'c']],
@@ -122,7 +122,7 @@ describe('Test the convert suite expected', () => {
 
         expect(
             // prettier-ignore
-            zip([{ a:[1],b:[2],c:'c'},{a:'a',c:'c'},{ a:'a',b:'b'}])
+            compress([{ a:[1],b:[2],c:'c'},{a:'a',c:'c'},{ a:'a',b:'b'}])
         ).toEqual([
             // prettier-ignore
             [[2,'c'],['a','c'],['a','b']],
@@ -134,7 +134,7 @@ describe('Test the convert suite expected', () => {
     test('json include sub object', () => {
         expect(
             // prettier-ignore
-            zip([{ a:{},b:{},c: {}}])
+            compress([{ a:{},b:{},c: {}}])
         ).toEqual([
             // prettier-ignore
             [['a','b','c']],
@@ -143,7 +143,7 @@ describe('Test the convert suite expected', () => {
 
         expect(
             // prettier-ignore
-            zip([{ a:{ a:{},b:{},c: {}},b:{},c: {}}])
+            compress([{ a:{ a:{},b:{},c: {}},b:{},c: {}}])
         ).toEqual([
             // prettier-ignore
             [['a','b','c']],
@@ -154,7 +154,7 @@ describe('Test the convert suite expected', () => {
     test('json include mix array and object and base type', () => {
         expect(
             // prettier-ignore
-            zip([{ a:{},b:{},c: {}}])
+            compress([{ a:{},b:{},c: {}}])
         ).toEqual([
             // prettier-ignore
             [['a','b','c']],
@@ -163,7 +163,7 @@ describe('Test the convert suite expected', () => {
 
         expect(
             // prettier-ignore
-            zip([{ a:[null, false, true, 123, '456'],b: {}}])
+            compress([{ a:[null, false, true, 123, '456'],b: {}}])
         ).toEqual([
             // prettier-ignore
             [['a','b']],
@@ -172,7 +172,7 @@ describe('Test the convert suite expected', () => {
 
         expect(
             // prettier-ignore
-            zip([{ b:[[[[[[[[[[[]]]]]]]]]]],a: {}}])
+            compress([{ b:[[[[[[[[[[[]]]]]]]]]]],a: {}}])
         ).toEqual([
             // prettier-ignore
             [['a','b']],
@@ -181,7 +181,7 @@ describe('Test the convert suite expected', () => {
 
         expect(
             // prettier-ignore
-            zip([
+            compress([
                 {
                     b: [],
                     a: {}
@@ -196,7 +196,7 @@ describe('Test the convert suite expected', () => {
 
         expect(
             // prettier-ignore
-            zip([
+            compress([
                 {
                     b: [],
                     a: {}
@@ -216,7 +216,7 @@ describe('Test the convert suite expected', () => {
 
         expect(
             // prettier-ignore
-            zip([
+            compress([
                 {
                     b: [],
                     a: {}
@@ -237,7 +237,7 @@ describe('Test the convert suite expected', () => {
 
         expect(
             // prettier-ignore
-            zip([
+            compress([
                 [{c: {d: {e: {}}}}]
             ])
         ).toEqual([
@@ -248,7 +248,7 @@ describe('Test the convert suite expected', () => {
         ])
 
         expect(
-            zip({
+            compress({
                 a: [{ b: [{ c: [{ d: [{ e: { f: [false, [true, 123]] } }] }] }] }]
             })
         ).toEqual([

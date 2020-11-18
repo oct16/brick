@@ -1,14 +1,14 @@
 import { AnyJson, BrickJsonResult } from './types'
-import { BrickJsonUnzip } from './unzip'
-import { BrickJsonZip } from './zip'
+import { BrickJsonDecompress } from './decompress'
+import { BrickJsonCompress } from './compress'
 
 export const BrickJson = {
-    zip(json: AnyJson) {
-        const { result } = new BrickJsonZip(json)
+    compress(json: AnyJson) {
+        const { result } = new BrickJsonCompress(json)
         return result
     },
-    unzip(brickJson: BrickJsonResult) {
-        const { result } = new BrickJsonUnzip(brickJson)
+    decompress(brickJson: BrickJsonResult) {
+        const { result } = new BrickJsonDecompress(brickJson)
         return result
     }
 }

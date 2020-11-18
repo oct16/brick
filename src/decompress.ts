@@ -1,6 +1,6 @@
 import { AnyJson, BrickJsonResult } from './types'
 
-export class BrickJsonUnzip {
+export class BrickJsonDecompress {
     private arrayIdentifier = '$'
     private keysMap: Map<string, number> = new Map()
     private indexMap: Map<number, string> = new Map()

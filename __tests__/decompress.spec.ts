@@ -2,13 +2,13 @@ import { BrickJson } from '../src'
 
 describe('Test convert BrickJson to Json ', () => {
     test('Wrong params throw a error', () => {
-        expect(() => BrickJson.unzip('123' as any)).toThrowError()
-        expect(() => BrickJson.unzip(123 as any)).toThrowError()
-        expect(() => BrickJson.unzip(null as any)).toThrowError()
-        expect(() => BrickJson.unzip(false as any)).toThrowError()
-        expect(() => BrickJson.unzip({} as any)).toThrowError()
-        expect(() => BrickJson.unzip([])).toThrowError()
-        expect(() => BrickJson.unzip([[], [], []])).toThrowError()
+        expect(() => BrickJson.decompress('123' as any)).toThrowError()
+        expect(() => BrickJson.decompress(123 as any)).toThrowError()
+        expect(() => BrickJson.decompress(null as any)).toThrowError()
+        expect(() => BrickJson.decompress(false as any)).toThrowError()
+        expect(() => BrickJson.decompress({} as any)).toThrowError()
+        expect(() => BrickJson.decompress([])).toThrowError()
+        expect(() => BrickJson.decompress([[], [], []])).toThrowError()
     })
 })
 
@@ -20,7 +20,7 @@ describe('Conversion and recovery', () => {
         ]
 
         dataArray.forEach(data => {
-            expect(BrickJson.unzip(BrickJson.zip(data))).toEqual(data)
+            expect(BrickJson.decompress(BrickJson.compress(data))).toEqual(data)
         })
     })
     test('Convert object list', () => {
@@ -39,7 +39,7 @@ describe('Conversion and recovery', () => {
         ]
 
         dataArray.forEach(data => {
-            expect(BrickJson.unzip(BrickJson.zip(data))).toEqual(data)
+            expect(BrickJson.decompress(BrickJson.compress(data))).toEqual(data)
         })
     })
 
@@ -55,7 +55,7 @@ describe('Conversion and recovery', () => {
         ]
 
         dataArray.forEach(data => {
-            expect(BrickJson.unzip(BrickJson.zip(data))).toEqual(data)
+            expect(BrickJson.decompress(BrickJson.compress(data))).toEqual(data)
         })
     })
 
@@ -72,7 +72,7 @@ describe('Conversion and recovery', () => {
         ]
 
         dataArray.forEach(data => {
-            expect(BrickJson.unzip(BrickJson.zip(data))).toEqual(data)
+            expect(BrickJson.decompress(BrickJson.compress(data))).toEqual(data)
         })
     })
 })
