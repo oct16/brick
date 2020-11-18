@@ -2,7 +2,8 @@ import { AnyJson, BrickJsonBasic, BrickJsonResult, JsonArray, JsonMap } from './
 
 export class BrickJsonZip {
     private arrayIdentifier = '$'
-    keys: (string | number)[][] = []
+    private keys: (string | number)[][] = []
+    private values: BrickJsonResult = []
     result: BrickJsonResult = []
     json: AnyJson
     private keyMap: Map<string, number> = new Map()
@@ -14,16 +15,13 @@ export class BrickJsonZip {
         }
         this.json = json
         arrayIdentifier && (this.arrayIdentifier = arrayIdentifier)
-        this.startConvert()
+        this.result = this.getResult()
     }
 
-    startConvert() {
+    getResult() {
         const data = this.json
-        if (Array.isArray(data)) {
-            this.result.push(...this.deepConvertArray(data, false))
-            return
-        }
-        this.result.push(this.deepConvertObj(data as JsonMap))
+        this.values = Array.isArray(data) ? [...this.deepConvertArray(data)] : this.deepConvertObj(data as JsonMap)!
+        return [this.keys, this.values]
     }
 
     deepConvertArray(jsonArray: JsonArray, isChild = true) {
@@ -53,7 +51,7 @@ export class BrickJsonZip {
         if (uniqueKey === '') {
             return res
         }
-        const objValues = objKeys.map(key => obj[key])
+        let objValues = objKeys.map(key => obj[key])
         if (this.keys.length) {
             const latestKey = this.getLastKeyInMap()
             for (const [key, index] of this.keyMap) {
@@ -76,17 +74,18 @@ export class BrickJsonZip {
                         debugger
                         newKey = sub
                         const index = this.keys.length
+                        this.saveKey(uniqueKey)
                         this.keys.push(newKey.split(','))
                         const shouldCombineKeyIndex = this.getBy(text) as number
                         this.keys[shouldCombineKeyIndex] = [index, ...text.replace(newKey, '').split(',').filter(Boolean)]
                         res.unshift(index)
                     } else {
-                        const i = text.indexOf(sub)
-                        const str = text.substring(i + sub.length)
-                        otherPart = str.split(',').filter(Boolean)
+                        otherPart = text.replace(sub, '').split(',').filter(Boolean)
                         newKey = [index, ...otherPart].map(k => (typeof k === 'number' ? this.getBy(k) : k)).join()
+                        objValues = newKey.split(',').map(key => obj[key])
                         const isKeyExist = this.getBy(newKey) !== undefined
                         if (!isKeyExist) {
+                            this.saveKey(uniqueKey)
                             this.keys.push([index, ...otherPart])
                             res.unshift(nextIndex)
                         }
@@ -94,6 +93,7 @@ export class BrickJsonZip {
                     break
                 } else if (latestKey === key) {
                     // None of keys matches
+                    this.saveKey(uniqueKey)
                     this.keys.push([...objKeys])
                     res.unshift(nextIndex)
                     break
@@ -105,7 +105,6 @@ export class BrickJsonZip {
         }
 
         res.push(...this.deepConvertArray(objValues, false))
-        this.saveKey(uniqueKey)
         return res
     }
 
