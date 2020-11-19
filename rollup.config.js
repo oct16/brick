@@ -3,15 +3,15 @@ import ts from 'rollup-plugin-typescript2'
 import commonjs from '@rollup/plugin-commonjs'
 import node from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
+import dts from 'rollup-plugin-dts'
 
-const name = 'brick.json'
-const outputConfigs = [
+const outputConfigs = path => [
     {
-        file: `dist/${name}.cjs.js`,
+        file: `${path}.cjs.js`,
         format: `cjs`
     },
     {
-        file: `dist/${name}.esm.js`,
+        file: `${path}.esm.js`,
         format: `es`,
         plugins: [
             terser({
@@ -22,23 +22,22 @@ const outputConfigs = [
                 },
                 output: { comments: false }
             })
-        ]
+        ],
+        sourcemap: true
     },
     {
         name: 'window',
-        file: `dist/${name}.global.js`,
+        file: `${path}.global.js`,
         format: `iife`,
-        extend: true
+        extend: true,
+        sourcemap: true
     }
 ]
 
 const tsPlugin = ts({
     check: process.env.NODE_ENV === 'production',
     tsconfig: path.resolve(__dirname, 'tsconfig.json'),
-    cacheRoot: path.resolve(__dirname, 'node_modules/.rts2_cache'),
-    tsconfigOverride: {
-        exclude: ['**/test']
-    }
+    cacheRoot: path.resolve(__dirname, 'node_modules/.rts2_cache')
 })
 
 const defaultPlugins = [
@@ -54,7 +53,21 @@ const defaultPlugins = [
 export default [
     {
         input: 'src/index.ts',
-        output: outputConfigs,
+        output: outputConfigs('dist/index'),
         plugins: [tsPlugin, ...defaultPlugins]
+    },
+    {
+        input: 'src/gzip/index.ts',
+        output: outputConfigs('gzip/index'),
+        plugins: [tsPlugin, ...defaultPlugins]
+    },
+    {
+        input: 'src/gzip/index.ts',
+        output: [
+            { file: 'gzip/index.d.ts', format: 'es' },
+            { file: 'gzip/index.esm.d.ts', format: 'es' },
+            { file: 'gzip/index.cjs.d.ts', format: 'es' }
+        ],
+        plugins: [dts()]
     }
 ]

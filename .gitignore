@@ -1,2 +1,10 @@
 node_modules/
-dist
+
+# Import location artifacts
+/dist
+/gzip
+
+yarn-error.log
+.DS_Store
+
+node_modules

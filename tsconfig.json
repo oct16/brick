@@ -17,6 +17,7 @@
         "removeComments": true,
         "declaration": true,
         "sourceMap": true,
+        "declarationMap": true,
         "jsx": "preserve",
         "skipLibCheck": true,
         "lib": [
@@ -28,7 +29,6 @@
         ]
     },
     "include": [
-        "benchmark/*",
         "src/*"
     ],
     "exclude": [
