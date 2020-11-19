@@ -1,14 +1,14 @@
-import { BrickJson } from '../src'
+import { decompress, compress } from '../src'
 
-describe('Test convert BrickJson to Json ', () => {
+describe('Test convert to Json ', () => {
     test('Wrong params throw a error', () => {
-        expect(() => BrickJson.decompress('123' as any)).toThrowError()
-        expect(() => BrickJson.decompress(123 as any)).toThrowError()
-        expect(() => BrickJson.decompress(null as any)).toThrowError()
-        expect(() => BrickJson.decompress(false as any)).toThrowError()
-        expect(() => BrickJson.decompress({} as any)).toThrowError()
-        expect(() => BrickJson.decompress([])).toThrowError()
-        expect(() => BrickJson.decompress([[], [], []])).toThrowError()
+        expect(() => decompress('123' as any)).toThrowError()
+        expect(() => decompress(123 as any)).toThrowError()
+        expect(() => decompress(null as any)).toThrowError()
+        expect(() => decompress(false as any)).toThrowError()
+        expect(() => decompress({} as any)).toThrowError()
+        expect(() => decompress([])).toThrowError()
+        expect(() => decompress([[], [], []])).toThrowError()
     })
 })
 
@@ -20,7 +20,7 @@ describe('Conversion and recovery', () => {
         ]
 
         dataArray.forEach(data => {
-            expect(BrickJson.decompress(BrickJson.compress(data))).toEqual(data)
+            expect(decompress(compress(data))).toEqual(data)
         })
     })
     test('Convert object list', () => {
@@ -39,7 +39,7 @@ describe('Conversion and recovery', () => {
         ]
 
         dataArray.forEach(data => {
-            expect(BrickJson.decompress(BrickJson.compress(data))).toEqual(data)
+            expect(decompress(compress(data))).toEqual(data)
         })
     })
 
@@ -55,7 +55,7 @@ describe('Conversion and recovery', () => {
         ]
 
         dataArray.forEach(data => {
-            expect(BrickJson.decompress(BrickJson.compress(data))).toEqual(data)
+            expect(decompress(compress(data))).toEqual(data)
         })
     })
 
@@ -72,7 +72,7 @@ describe('Conversion and recovery', () => {
         ]
 
         dataArray.forEach(data => {
-            expect(BrickJson.decompress(BrickJson.compress(data))).toEqual(data)
+            expect(decompress(compress(data))).toEqual(data)
         })
     })
 })

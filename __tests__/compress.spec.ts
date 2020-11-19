@@ -1,31 +1,29 @@
-import { BrickJson } from '../src'
+import { compress } from '../src'
 
 describe('Test convert a json ', () => {
     test('Wrong params throw a error', () => {
-        expect(() => BrickJson.compress(123)).toThrowError()
-        expect(() => BrickJson.compress(null)).toThrowError()
-        expect(() => BrickJson.compress(undefined)).toThrowError()
-        expect(() => BrickJson.compress(true)).toThrowError()
-        expect(() => BrickJson.compress(false)).toThrowError()
+        expect(() => compress(123)).toThrowError()
+        expect(() => compress(null)).toThrowError()
+        expect(() => compress(undefined)).toThrowError()
+        expect(() => compress(true)).toThrowError()
+        expect(() => compress(false)).toThrowError()
     })
 
     test('Result is a array', () => {
-        expect(Array.isArray(BrickJson.compress([{}]))).toEqual(true)
-        expect(Array.isArray(BrickJson.compress({}))).toEqual(true)
-        expect(Array.isArray(BrickJson.compress([]))).toEqual(true)
+        expect(Array.isArray(compress([{}]))).toEqual(true)
+        expect(Array.isArray(compress({}))).toEqual(true)
+        expect(Array.isArray(compress([]))).toEqual(true)
     })
 
     test('Result length equal 2', () => {
-        expect(BrickJson.compress({ a: 'a' }).length).toEqual(2)
-        expect(BrickJson.compress([]).length).toEqual(2)
-        expect(BrickJson.compress([{}, {}, {}]).length).toEqual(2)
-        expect(BrickJson.compress([{ a: 'a' }]).length).toEqual(2)
+        expect(compress({ a: 'a' }).length).toEqual(2)
+        expect(compress([]).length).toEqual(2)
+        expect(compress([{}, {}, {}]).length).toEqual(2)
+        expect(compress([{ a: 'a' }]).length).toEqual(2)
     })
 })
 
 describe('Test the convert suite expected', () => {
-    const compress = BrickJson.compress
-
     test('Convert object', () => {
         expect(
             // prettier-ignore
