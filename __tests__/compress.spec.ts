@@ -34,6 +34,15 @@ describe('Test the convert suite expected', () => {
             // prettier-ignore
             [0, 'a', 'b']
         ])
+        expect(
+            // prettier-ignore
+            compress({a:null,b:false,c: undefined})
+        ).toEqual([
+            // prettier-ignore
+            [['a', 'b', 'c']],
+            // prettier-ignore
+            [0, null, false, undefined]
+        ])
 
         expect(
             // prettier-ignore
@@ -254,6 +263,25 @@ describe('Test the convert suite expected', () => {
             [['a'], ['b'], ['c'], ['d'], ['e'], ['f']],
             [0, ['$', [1, ['$', [2, ['$', [3, ['$', [4, [5, ['$', false, ['$', true, 123]]]]]]]]]]]]
             // prettier-ignore
+        ])
+    })
+})
+
+describe('Test the convert with options', () => {
+    test('compression with arrayIdentifier', () => {
+        const data = [1, 2, 3, [3, 2, 1]]
+        expect(compress(data, { arrayIdentifier: '#' })).toEqual([[], ['#', 1, 2, 3, ['#', 3, 2, 1]]])
+        expect(compress(data, { arrayIdentifier: 'xxxx' })).toEqual([[], ['xxxx', 1, 2, 3, ['xxxx', 3, 2, 1]]])
+    })
+
+    test('compression with reduceValues', () => {
+        const data = [{"a":"aa","b":"bb","c":"cc"},{"a":"aa","b":{"a":"aaa","b":"aaa"}},
+        {"a":"2A","b":{"b":"B","c":"C","d":[true,null,false],"a":"A"}}] // prettier-ignore
+
+        expect(compress(data, { reduceValues: true })).toEqual([
+            [[1,"c"],["a","b"],[0,"d"]], // prettier-ignore
+            ["aa","bb","cc","aaa","2A","A","B","C"], // prettier-ignore
+            ["$",[0,0,1,2],[1,0,[1,3,3]],[1,4,[2,5,6,7,["$",true,null,false]]]] // prettier-ignore
         ])
     })
 })
