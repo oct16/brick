@@ -1,20 +1,35 @@
-import { AnyJson, BrickJsonResult } from './types'
+import { AnyJson, BrickJsonBasic, BrickJsonResult } from './types'
 
 export class BrickJsonDecompress {
     private arrayIdentifier = '$'
     private keysMap: Map<string, number> = new Map()
     private indexMap: Map<number, string> = new Map()
+    private vKeys: BrickJsonBasic[] = []
     result: AnyJson
+    reduceValues: boolean
 
-    constructor(brickJson: BrickJsonResult) {
+    constructor(brickJson: BrickJsonResult, options?: Partial<{ arrayIdentifier: string }>) {
+        const { arrayIdentifier } = options || {}
+        arrayIdentifier && (this.arrayIdentifier = arrayIdentifier)
         this.result = this.convert2Json(brickJson)
     }
 
     convert2Json(brickJson: BrickJsonResult) {
-        if (!Array.isArray(brickJson) || brickJson.length !== 2) {
+        if (!Array.isArray(brickJson) || brickJson.length < 2 || brickJson.length > 3) {
             throw new Error('Params is not valid')
         }
-        const [keys, values] = brickJson as [BrickJsonResult[], BrickJsonResult]
+        const keys = brickJson[0] as BrickJsonResult[]
+        let vKeys: BrickJsonBasic[]
+        let values: BrickJsonResult
+
+        if (brickJson.length === 3) {
+            vKeys = brickJson[1] as BrickJsonBasic[]
+            values = brickJson[2] as BrickJsonResult
+            this.vKeys = vKeys
+            this.reduceValues = true
+        } else {
+            values = brickJson[1] as BrickJsonResult
+        }
 
         const ks = keys.slice() as Array<BrickJsonResult & { i: number }>
 
@@ -32,57 +47,41 @@ export class BrickJsonDecompress {
             const otherPart = keyItem.slice(1) as string[]
             if (typeof firstPart === 'number') {
                 const uniqueKey = this.indexMap.get(firstPart)
-                if (uniqueKey) {
-                    const newKey = [uniqueKey, ...otherPart].join()
-                    this.keysMap.set(newKey, i)
-                    this.indexMap.set(i, newKey)
-                    continue
-                }
-                ks.push(keyItem)
+                const newKey = [uniqueKey, ...otherPart].join()
+                this.keysMap.set(newKey, i)
+                this.indexMap.set(i, newKey)
+                continue
             }
         }
 
-        const firstOne = values[0]
-        if (typeof firstOne === 'number' || firstOne === this.arrayIdentifier) {
-            return this.convertObj(values)
-        }
-        return this.convertArray(values)
+        return this.convertObj(values)
     }
 
     convertObj(item: BrickJsonResult) {
-        debugger
         if (Array.isArray(item)) {
             const firstOne = item[0]
             if (firstOne === this.arrayIdentifier) {
-                // is Array
                 const arr = item.slice(1)
                 return this.convertArray(arr)
             }
 
-            // is Object
             const len = item.length
             if (!len) {
                 return {}
             }
             const keysRef = item[0] as number
-            const keyStr = this.indexMap.get(keysRef)
+            const keyStr = this.indexMap.get(keysRef)!
             const obj: AnyJson = {}
-
-            if (keyStr) {
-                const keys = keyStr.split(',')
-                const values = item.slice(1)
-
-                keys.forEach((key, i) => {
-                    const val = values[i]
-                    obj[key] = Array.isArray(val) ? this.convertObj(val) : val
-                })
-            }
+            const keys = keyStr.split(',')
+            const values = item.slice(1)
+            keys.forEach((key, i) => {
+                const value = values[i]
+                const val = this.reduceValues && typeof value === 'number' ? this.vKeys[value] : value
+                obj[key] = Array.isArray(val) ? this.convertObj(val) : val
+            })
             return obj
         }
-
-        if (item !== this.arrayIdentifier) {
-            return item
-        }
+        return item
     }
 
     convertArray(array: BrickJsonResult) {

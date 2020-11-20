@@ -18,6 +18,8 @@
     "keywords": [
         "json",
         "compressor",
+        "compression",
+        "compress",
         "cjson",
         "hpack"
     ],

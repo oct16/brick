@@ -5,4 +5,4 @@ export interface JsonMap {
 export type JsonArray = Array<AnyJson>
 
 export type BrickJsonResult = Array<BrickJsonBasic | BrickJsonResult>
-export type BrickJsonBasic = string | number | null | undefined
+export type BrickJsonBasic = string | number | null | undefined | boolean
