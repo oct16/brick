@@ -1,41 +1,38 @@
-import { AnyJson, BrickJsonBasic, BrickJsonResult } from './types'
+import { AnyJson, BrickJsonResult } from './types'
 
 export class BrickJsonDecompress {
-    private arrayIdentifier = '$'
+    private defaultOptions = { ai: '$', si: ',' }
+
     private keysMap: Map<string, number> = new Map()
     private indexMap: Map<number, string> = new Map()
-    private vKeys: BrickJsonBasic[] = []
     result: AnyJson
-    reduceValues: boolean
+    options: { si: string; ai: string }
 
-    constructor(brickJson: BrickJsonResult, options?: Partial<{ arrayIdentifier: string }>) {
-        const { arrayIdentifier } = options || {}
-        arrayIdentifier && (this.arrayIdentifier = arrayIdentifier)
-        this.result = this.convert2Json(brickJson)
+    constructor(brickJson: [{ si?: string; ai?: string }, BrickJsonResult, BrickJsonResult] | [BrickJsonResult, BrickJsonResult]) {
+        let kIndex = 0
+        let vIndex = 1
+        this.options = this.defaultOptions
+        if (Object.prototype.toString.call(brickJson[0]).slice(8, 14) === 'Object') {
+            this.options = { ...this.defaultOptions, ...(brickJson[0] as Partial<{ si: string; ai: string }>) }
+            kIndex++
+            vIndex++
+        }
+
+        const keys = brickJson[kIndex] as BrickJsonResult[]
+        const values = brickJson[vIndex] as BrickJsonResult
+        this.result = this.convert2Json(keys, values)
     }
 
-    convert2Json(brickJson: BrickJsonResult) {
-        if (!Array.isArray(brickJson) || brickJson.length < 2 || brickJson.length > 3) {
+    convert2Json(keys: BrickJsonResult[], values: BrickJsonResult) {
+        if (!keys || !Array.isArray(keys) || !values || !Array.isArray(values)) {
             throw new Error('Params is not valid')
-        }
-        const keys = brickJson[0] as BrickJsonResult[]
-        let vKeys: BrickJsonBasic[]
-        let values: BrickJsonResult
-
-        if (brickJson.length === 3) {
-            vKeys = brickJson[1] as BrickJsonBasic[]
-            values = brickJson[2] as BrickJsonResult
-            this.vKeys = vKeys
-            this.reduceValues = true
-        } else {
-            values = brickJson[1] as BrickJsonResult
         }
 
         const ks = keys.slice() as Array<BrickJsonResult & { i: number }>
 
         keys.forEach((item, index) => {
             ks[index].i = index
-            const key = item.join()
+            const key = item.join(this.options.si)
             this.keysMap.set(key, index)
             this.indexMap.set(index, key)
         })
@@ -43,14 +40,19 @@ export class BrickJsonDecompress {
         while (ks.length) {
             const keyItem = ks.shift()!
             const i = keyItem.i
-            const firstPart = keyItem[0]
-            const otherPart = keyItem.slice(1) as string[]
-            if (typeof firstPart === 'number') {
-                const uniqueKey = this.indexMap.get(firstPart)
-                const newKey = [uniqueKey, ...otherPart].join()
+
+            const preKey = keyItem.join(this.options.si)
+            for (const [index, key] of keyItem.entries()) {
+                if (typeof key === 'number') {
+                    const uniqueKey = this.indexMap.get(key)!
+                    keyItem[index] = uniqueKey.split(this.options.si)
+                }
+            }
+            const newKey = keyItem.flat().join(this.options.si)
+            if (preKey !== newKey) {
+                this.keysMap.delete(preKey)
                 this.keysMap.set(newKey, i)
                 this.indexMap.set(i, newKey)
-                continue
             }
         }
 
@@ -60,7 +62,7 @@ export class BrickJsonDecompress {
     convertObj(item: BrickJsonResult) {
         if (Array.isArray(item)) {
             const firstOne = item[0]
-            if (firstOne === this.arrayIdentifier) {
+            if (firstOne === this.options.ai) {
                 const arr = item.slice(1)
                 return this.convertArray(arr)
             }
@@ -72,11 +74,10 @@ export class BrickJsonDecompress {
             const keysRef = item[0] as number
             const keyStr = this.indexMap.get(keysRef)!
             const obj: AnyJson = {}
-            const keys = keyStr.split(',')
+            const keys = keyStr.split(this.options.si)
             const values = item.slice(1)
             keys.forEach((key, i) => {
-                const value = values[i]
-                const val = this.reduceValues && typeof value === 'number' ? this.vKeys[value] : value
+                const val = values[i]
                 obj[key] = Array.isArray(val) ? this.convertObj(val) : val
             })
             return obj
