@@ -1,11 +1,11 @@
 # Brick.Json
-
+[![Coverage Status](https://coveralls.io/repos/github/oct16/brick/badge.svg)](https://coveralls.io/github/oct16/brick)
 ##### A simple JSON compression algorithm that can reduces the size of the transfer to the server
 
 ### Installation
 ```bash
 $ npm install brick.json
-or
+# or
 $ yarn add brick.json
 ```
 ### Usage
