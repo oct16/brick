@@ -1,30 +1,37 @@
 import { compress, decompress } from '../src'
-import fetch from 'node-fetch'
+import data1 from '../benchmark/data/1.json'
+import data2 from '../benchmark/data/2.json'
+import data3 from '../benchmark/data/3.json'
+import data4 from '../benchmark/data/4.json'
+import data5 from '../benchmark/data/5.json'
 
-describe('Test convert to Json ', () => {
-    test('Compress data from github react open issues list', async () => {
-        const data = await fetch('https://api.github.com/repos/facebook/react/issues?state=open').then(res => res.json())
-        expect(decompress(compress(data))).toEqual(data)
-        expect(decompress(compress(data, { reduceValues: true }))).toEqual(data)
+describe('Test Really Json', () => {
+    const dataList = [data1, data2, data3, data4, data5]
+    test('test benchmark data', async () => {
+        dataList.forEach((data, i) => {
+            expect(decompress(compress(data))).toEqual(data)
+            expect(decompress(compress(data))).toEqual(data)
+        })
     })
 
-    test('Compress data from github react pull request list', async () => {
-        const data = await fetch('https://api.github.com/repos/facebook/react/pulls').then(res => res.json())
-        expect(decompress(compress(data))).toEqual(data)
-        expect(decompress(compress(data, { reduceValues: true }))).toEqual(data)
-    })
+    test('test benchmark data with options', async () => {
+        dataList.forEach((data, i) => {
+            expect(decompress(compress(data, { separatorIdentifier: '0' }))).toEqual(data)
+            expect(decompress(compress(data))).toEqual(data)
+        })
 
-    test('Compress data from github react git trees', async () => {
-        const data = await fetch(
-            'https://api.github.com/repos/facebook/react/git/trees/ebf158965f2b437515af0bed2b9e9af280e0ba3c'
-        ).then(res => res.json())
-        expect(decompress(compress(data))).toEqual(data)
-        expect(decompress(compress(data, { reduceValues: true }))).toEqual(data)
-    })
+        dataList.forEach((data, i) => {
+            expect(decompress(compress(data, { separatorIdentifier: '#' }))).toEqual(data)
+            expect(decompress(compress(data))).toEqual(data)
+        })
 
-    test('Compress data from github react git repo', async () => {
-        const data = await fetch('https://api.github.com/repos/facebook/react').then(res => res.json())
-        expect(decompress(compress(data))).toEqual(data)
-        expect(decompress(compress(data, { reduceValues: true }))).toEqual(data)
+        dataList.forEach((data, i) => {
+            expect(decompress(compress(data, { separatorIdentifier: '#', arrayIdentifier: '^' }))).toEqual(data)
+            expect(decompress(compress(data))).toEqual(data)
+        })
+        dataList.forEach((data, i) => {
+            expect(decompress(compress(data, { separatorIdentifier: '*', arrayIdentifier: '*' }))).toEqual(data)
+            expect(decompress(compress(data))).toEqual(data)
+        })
     })
 })
