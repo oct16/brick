@@ -1,6 +1,6 @@
 # Brick.Json
 [![Coverage Status](https://coveralls.io/repos/github/oct16/brick/badge.svg)](https://coveralls.io/github/oct16/brick)
-##### A simple JSON compression algorithm that can reduces the size of the transfer to the server
+#### An algorithm for compress JSON, up to 15% better than Gzip
 
 ### Installation
 ```bash
@@ -35,7 +35,7 @@ const res = decompressWithGzip(str) // res is deep equal data
 ### Background
 
 Sometimes our browser will upload some data to the server, but as the sender, the browser does not know which compression algorithms are supported by the service, so by default the uploaded data is not compressed, which is why this solution exists.
-We have used a cjson-like algorithms approach to de-weight duplicate keys to reduce the json size. As the compressed data resembles a lot of bricks 🧱🧱🧱, so it is named Brick.Json
+This lib used a cjson-like algorithms approach to de-weight duplicate keys to reduce the json size. As the compressed data resembles a lot of bricks 🧱🧱🧱, so it is named Brick.Json
 ### How it's work
 
 A raw JSON object like below
@@ -81,6 +81,8 @@ In the case of an array, the values of the array are ordered by an identifying a
  
 ### How it's compression rate and performance
 
+##### Platform: MacBook Pro 2018 6C16G
+
 ```
 ┌───────────────────────┬────────────────────┬───────────────────┬──────────────────────┬──────────────────────┬─────────────────────┬───────────────────┐
 │ Algorithm \ Data      │ Data1 (Object)     │ Data2 (Object)    │ Data3 (List1)        │ Data4 (List2)        │ Data5 (JueJin)      │ Data6 (Random)    │
@@ -118,14 +120,16 @@ BrkckJson decompressWithGzip: data3 x 54.18 ops/sec ±0.55% (68 runs sampled)
 
 ### Conclusion
 
-Brotli has a high compression rate, but the performance is not very good, the compression speed is about 10 times slower than Gzip!
+1. Brotli has a high compression rate, but the performance is not very good, the compression speed is about 10 times slower than Gzip!
 
-With Brotli and Gzip together, performance is similar, but compression ratios can be improved by around 10%!
+2. With Brotli and Gzip together, performance is similar, but compression ratios can be improved by around 10%!
 
-Brick.Json is more compatible and more robust than JSONH
+3. Brick.Json is more compatible and more robust than JSONH
+
+### recommendation
 
 1. Transfer data from server to client, choose [Google Brotli](https://github.com/google/brotli)
-2. Transfer data from client to server, choose Gzip or Brick.Json
+2. Transfer data from client to server, choose Gzip or [Brick.Json](https://github.com/oct16/brick)
 
 ### Alternatives
 
