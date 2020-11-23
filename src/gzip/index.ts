@@ -5,7 +5,8 @@ import { compress, decompress } from '..'
 export function compressWithGzip(json: AnyJson, options?: Partial<{ arrayIdentifier: string; separatorIdentifier: string }>): string {
     const result = compress(json, options)
     const buf = pako.gzip(JSON.stringify(result))
-    return String.fromCharCode.apply(null, new Uint8Array(buf))
+    const uint8Array = new Uint8Array(buf)
+    return uint8Array.reduce((acc, i) => (acc += String.fromCharCode.apply(null, [i])), '')
 }
 
 export function decompressWithGzip(str: string) {
